@@ -69,26 +69,60 @@ module.exports.createUser = async(req, res) => {
         email,
         password,
     } = req.body;
+
     const hashdPassword = await bcrypt.hash(password, 10);
-    User.findOne({ email }).then((user) => (user ? res.status(ERROR_CODE).send({ message: 'this email is takin ' }) : ''));
+
     try {
-        await User.create({
+        const userExists = await User.findOne({ email });
+        if (userExists) {
+            return res.status(ERROR_CODE).send({ message: 'this email is taken ' });
+        }
+
+        const newUser = await User.create({
             name,
             about,
             avatar,
             email,
             password: hashdPassword,
-        }).then((user) => res.status(201).send({ data: user }));
-        // res.send(newUser);
+        });
+
+        return res.status(201).send({ data: newUser });
     } catch (err) {
-        console.log(err)
+        console.log(err);
         if (err.name === 'ValidationError') {
-            res.status(ERROR_CODE).send({ message: 'invalid data passed to the methods for creating a user ' });
-        } else {
-            res.status(SERVER_ERROR).send({ message: 'An error has occurred on the server.' });
+            return res.status(ERROR_CODE).send({ message: 'invalid data passed to the methods for creating a user ' });
         }
+        return res.status(SERVER_ERROR).send({ message: 'An error has occurred on the server.' });
     }
 };
+// module.exports.createUser = async(req, res) => {
+//     const {
+//         name,
+//         about,
+//         avatar,
+//         email,
+//         password,
+//     } = req.body;
+//     const hashdPassword = await bcrypt.hash(password, 10);
+//     User.findOne({ email }).then((user) => (user ? res.status(ERROR_CODE).send({ message: 'this email is takin ' }) : ''));
+//     try {
+//         await User.create({
+//             name,
+//             about,
+//             avatar,
+//             email,
+//             password: hashdPassword,
+//         }).then((user) => res.status(201).send({ data: user }));
+//         // res.send(newUser);
+//     } catch (err) {
+//         console.log(err)
+//         if (err.name === 'ValidationError') {
+//             res.status(ERROR_CODE).send({ message: 'invalid data passed to the methods for creating a user ' });
+//         } else {
+//             res.status(SERVER_ERROR).send({ message: 'An error has occurred on the server.' });
+//         }
+//     }
+// };
 
 module.exports.updateUser = async(req, res) => {
     try {
