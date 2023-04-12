@@ -27,6 +27,7 @@ module.exports.createCard = async(req, res, next) => {
 };
 module.exports.deletecardById = async(req, res) => {
     try {
+        console.log()
         const card = await Card.findByIdAndDelete({ _id: req.params._id }).orFail(() => {
             const error = new Error('No card found with that id');
             error.statusCode = NOT_FOUND_ERROR;

@@ -23,4 +23,12 @@ const errorLogger = createLogger({
     ]
 });
 
-module.exports = { requestLogger, errorLogger };
+module.exports.requestLogger = (req, res, next) => {
+    requestLogger.info({ method: req.method, url: req.url });
+    next();
+};
+
+module.exports.errorLogger = (err, req, res, next) => {
+    errorLogger.error({ message: err.message });
+    next(err);
+};

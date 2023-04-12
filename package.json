@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
-        "dev": "cross-env JWT_TOKEN=1234 npx nodemon app.js",
+        "dev": "npx nodemon app.js",
         "start": "node ./app.js",
         "lint": "npx eslint ."
     },
@@ -23,6 +23,7 @@
         "celebrate": "^15.0.1",
         "cors": "^2.8.5",
         "cross-env": "^7.0.3",
+        "dotenv": "^16.0.3",
         "experss": "^0.0.1-security",
         "express": "^4.18.2",
         "express-rate-limit": "^6.7.0",

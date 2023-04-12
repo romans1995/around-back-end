@@ -40,7 +40,7 @@ module.exports.login = (req, res, next) => {
 module.exports.getUsers = (req, res, next) => {
     User.find({})
         .then((user) => res.send({ data: user }))
-        .catch((err) => next(res.status(SERVER_ERROR).send({ message: 'Error' })));
+        .catch(() => next(res.status(SERVER_ERROR).send({ message: 'Error' })));
 };
 
 module.exports.getUserById = async(req, res, next) => {
@@ -95,34 +95,6 @@ module.exports.createUser = async(req, res) => {
         return res.status(SERVER_ERROR).send({ message: 'An error has occurred on the server.' });
     }
 };
-// module.exports.createUser = async(req, res) => {
-//     const {
-//         name,
-//         about,
-//         avatar,
-//         email,
-//         password,
-//     } = req.body;
-//     const hashdPassword = await bcrypt.hash(password, 10);
-//     User.findOne({ email }).then((user) => (user ? res.status(ERROR_CODE).send({ message: 'this email is takin ' }) : ''));
-//     try {
-//         await User.create({
-//             name,
-//             about,
-//             avatar,
-//             email,
-//             password: hashdPassword,
-//         }).then((user) => res.status(201).send({ data: user }));
-//         // res.send(newUser);
-//     } catch (err) {
-//         console.log(err)
-//         if (err.name === 'ValidationError') {
-//             res.status(ERROR_CODE).send({ message: 'invalid data passed to the methods for creating a user ' });
-//         } else {
-//             res.status(SERVER_ERROR).send({ message: 'An error has occurred on the server.' });
-//         }
-//     }
-// };
 
 module.exports.updateUser = async(req, res) => {
     try {
