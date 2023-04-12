@@ -6,6 +6,7 @@ const {
     ERROR_CODE,
     SERVER_ERROR,
 } = require('../constants/utils');
+const { JWT_SECRET } = process.env;
 
 module.exports.getUserData = (req, res) => {
     console.log(req.user._id)
@@ -24,7 +25,7 @@ module.exports.login = (req, res, next) => {
         .then((user) => {
             // create a token
             const token = jwt.sign({ _id: user._id },
-                process.env.JWT_TOKEN, {
+                JWT_SECRET, {
                     expiresIn: '7d',
                 },
             );
