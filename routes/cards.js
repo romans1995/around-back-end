@@ -11,6 +11,7 @@ const {
     validateObjectId,
     validateCard,
 } = require('../middlewares/validation');
+const auth = require('../middlewares/auth').default;
 
 
 router.delete('/:_id', validateObjectId, deletecardById);

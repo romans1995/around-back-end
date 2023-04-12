@@ -1,10 +1,9 @@
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_TOKEN;
-
 module.exports = (req, res, next) => {
     // get authorization from the header by destructuring
     const { authorization } = req.headers;
-    console.log(authorization);
+    // console.log(authorization)
     // check that the header exists and starts with 'Bearer '
     if (!authorization || !authorization.startsWith('Bearer ')) {
         return res
