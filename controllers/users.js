@@ -6,7 +6,7 @@ const {
     ERROR_CODE,
     SERVER_ERROR,
 } = require('../constants/utils');
-const { JWT_SECRET } = process.env;
+const JWT_SECRET = process.env.JWT_TOKEN;
 
 module.exports.getUserData = (req, res) => {
     console.log(req.user._id)
@@ -20,7 +20,6 @@ module.exports.getUserData = (req, res) => {
 
 module.exports.login = (req, res, next) => {
     const { email, password } = req.body;
-
     return User.findUserByCredentials(email, password, next)
         .then((user) => {
             // create a token
