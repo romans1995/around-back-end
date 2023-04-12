@@ -22,6 +22,7 @@ const {
 } = require('./middlewares/validation');
 
 const app = express();
+mongoose.set('strictQuery', false);
 // console.log("this is", process.env)
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
