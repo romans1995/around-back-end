@@ -14,7 +14,6 @@ module.exports = (req, res, next) => {
     // auth header exists and is in correct format
     // so extract the token from the header
     const token = authorization.replace('Bearer ', '');
-    console.log(token);
     let payload;
     try {
         payload = jwt.verify(token, JWT_SECRET);
