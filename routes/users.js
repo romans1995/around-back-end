@@ -16,8 +16,8 @@ const {
 router.get('/me', getUserData);
 router.get('/:_id', validateObjectId, getUserById);
 router.get('/', getUsers);
-router.put('/me', validateProfile, updateUser);
-router.put('/me/avatar', validateAvatar, updateAvatar);
+router.patch('/me', validateProfile, updateUser);
+router.patch('/me/avatar', validateAvatar, updateAvatar);
 
 
 module.exports = router;

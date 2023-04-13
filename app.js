@@ -59,7 +59,12 @@ app.get('/crash-test', () => {
         throw new Error('Server will crash now');
     }, 0);
 });
-app.use(cors());
+app.use(cors({
+    // Allow PATCH requests from any origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    // Specify the allowed origin(s) for requests
+    origin: '*',
+}));
 app.options('*', cors());
 
 app.post('/signin', validateAuthentication, login);
