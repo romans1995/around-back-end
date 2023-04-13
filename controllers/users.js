@@ -106,7 +106,7 @@ module.exports.updateUser = async(req, res) => {
             error.statusCode = NOT_FOUND_ERROR;
             throw error;
         });
-        res.send(newUser);
+        return res.send(newUser);
     } catch (err) {
         if (err.name === 'ValidationError') {
             res.status(ERROR_CODE).send({ message: 'invalid data passed to the methods for creating a user ' });
