@@ -65,6 +65,11 @@ app.use(cors({
     // Specify the allowed origin(s) for requests
     origin: '*',
 }));
+app.options('/users/me/avatar', cors({
+    methods: ['PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    origin: '*',
+}));
 app.options('*', cors());
 
 app.post('/signin', validateAuthentication, login);
