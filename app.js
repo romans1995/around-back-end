@@ -64,19 +64,19 @@ app.options('*', cors());
 
 app.post('/signin', validateAuthentication, login);
 app.post('/signup', validateUserBody, createUser);
-app.get('/me', getUserData);
 
 
-app.use(express.static(path.join(__dirname, 'routes')));
 app.use('/cards', auth, cardRoutes);
 app.use('/users', auth, userRoutes);
 
-app.use((req, res) => {
-    res.status(NOT_FOUND_ERROR).send({ message: 'The requested resource was not found' });
+app.use((req, res, next) => {
+    const error = new Error('The requested resource was not found');
+    res.status(NOT_FOUND_ERROR)
+    next(error);
 });
 app.use(errorLogger);
 app.use(errors());
-router.use(auth);
+
 app.use(errorHandler);
 app.listen(PORT, () => {
     console.log('Server listening on port 3000');
