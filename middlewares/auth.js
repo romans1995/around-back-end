@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken');
 
-const NODE_ENV = 'production';
-const { ForbiddenError, UnauthorizedError } = require('../constants/utils');
+const ForbiddenError = require('../errors/ForbiddenError');
+const UnauthorizedError = require('../errors/UnauthorizedError');
 
-const { JWT_TOKEN } = process.env || NODE_ENV;
+const { JWT_TOKEN = 'dev-key' } = process.env;
 module.exports = (req, res, next) => {
   // get authorization from the header by destructuring
   const { authorization } = req.headers;

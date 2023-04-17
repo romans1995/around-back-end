@@ -1,16 +1,15 @@
 const Card = require('../models/card');
+const NotFoundError = require('../errors/NotFoundError');
+const ERROR_CODE = require('../errors/ERROR_CODE');
+const ForbiddenError = require('../errors/ForbiddenError');
 const {
   NOT_FOUND_ERROR,
-  ERROR_CODE,
-  SERVER_ERROR,
-  NotFoundError,
-  ForbiddenError,
 } = require('../constants/utils');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((card) => res.send({ data: card }))
-    .catch(() => next(new SERVER_ERROR('An error has occurred on the server.')));
+    .catch(next);
 };
 
 module.exports.createCard = async (req, res, next) => {
@@ -26,14 +25,14 @@ module.exports.createCard = async (req, res, next) => {
     } else if (err.statusCode === NotFoundError) {
       next(new NotFoundError(' bad request'));
     } else {
-      next(new SERVER_ERROR('An error has occurred on the server.'));
+      next(err);
     }
 
   }
 
 };
 module.exports.deletecardById = async (req, res, next) => {
-  Card.findById({ _id: req.params._id }).orFail(() => new NOT_FOUND_ERROR('card not found'))
+  Card.findById({ _id: req.params._id }).orFail(() => { throw new NotFoundError('card not found'); })
     .then((card) => {
       if (!card.owner.equals(req.user._id)) {
         return next(new ForbiddenError('You are now the the owner of the card'));
@@ -46,7 +45,7 @@ module.exports.deletecardById = async (req, res, next) => {
       } else if (err.statusCode === NOT_FOUND_ERROR) {
         next(new NotFoundError('user not found'));
       } else {
-        next(new SERVER_ERROR('An error has occurred on the server.'));
+        next(err);
       }
     });
 };
@@ -66,7 +65,7 @@ module.exports.likeCard = async (req, res, next) => {
     } else if (err.statusCode === NOT_FOUND_ERROR) {
       next(new NotFoundError('invalid card id'));
     } else {
-      next(new SERVER_ERROR('An error has occurred on the server.'));
+      next(err);
     }
   }
 };
@@ -89,7 +88,7 @@ module.exports.dislikeCard = async (req, res, next) => {
     } else if (err.statusCode === NOT_FOUND_ERROR) {
       next(new NotFoundError('invalid card id'));
     } else {
-      next(new SERVER_ERROR('An error has occurred on the server.'));
+      next(err);
     }
   }
 };

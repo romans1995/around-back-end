@@ -5,11 +5,8 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const cors = require('cors');
-// const router = require('./routes');
-const validator = require('validator');
-const Joi = require('joi');
 const { errors } = require('celebrate');
-const { NOT_FOUND_ERROR } = require('./constants/utils');
+const NotFoundError = require('./errors/NotFoundError');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const errorHandler = require('./middlewares/errorHandler');
@@ -38,15 +35,6 @@ mongoose.set('strictQuery', true);
 app.use(helmet());
 app.use(limiter);
 
-const validateUrl = (value, helpers) => {
-  if (validator.isURL(value)) {
-    return value;
-  }
-  return helpers.error('string.uri');
-};
-
-// validation value for the link property
-Joi.string().required().custom(validateUrl);
 // authorization
 
 app.use(requestLogger);
@@ -66,9 +54,7 @@ app.use('/cards', auth, cardRoutes);
 app.use('/users', auth, userRoutes);
 
 app.use((req, res, next) => {
-  const error = new Error('The requested resource was not found');
-  res.status(NOT_FOUND_ERROR);
-  next(error);
+  next(new NotFoundError('The requested resource was not found'));
 });
 app.use(errorLogger);
 app.use(errors());

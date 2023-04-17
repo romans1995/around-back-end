@@ -1,29 +1,26 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const {
-  NotFoundError,
-  ERROR_CODE,
-  SERVER_ERROR,
-  ConflictError,
-} = require('../constants/utils');
 
-const NODE_ENV = 'production';
-const { JWT_TOKEN } = process.env || NODE_ENV;
+const NotFoundError = require('../errors/NotFoundError');
+const ERROR_CODE = require('../errors/ERROR_CODE');
+const SERVER_ERROR = require('../errors/SERVER_ERROR');
+const ConflictError = require('../errors/ConflictError');
+
+const { JWT_TOKEN = 'dev-key' } = process.env;
 
 module.exports.getUserData = (req, res, next) => {
-  console.log(req.user._id);
   User.findById(req.user._id)
     .orFail(() => {
-      throw new Error('No user found with this Id');
+      throw new NotFoundError('No user found with this Id');
     })
     .then((user) => res.status(200).send(user))
-    .catch(() => next(new SERVER_ERROR('server error')));
+    .catch(next);
 };
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-  return User.findUserByCredentials(email, password, next)
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       // create a token
       const token = jwt.sign(
@@ -34,27 +31,23 @@ module.exports.login = (req, res, next) => {
           expiresIn: '7d',
         },
       );
-      req.headers.token = token;
+      // req.headers.token = token;
       // return the token to client
       res.send({ token });
     })
-    .catch(() => {
-      next(new SERVER_ERROR('Incorrect email or password'));
-    });
+    .catch(next);
 };
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((user) => res.send({ data: user }))
-    .catch(() => next(new SERVER_ERROR('Error')));
+    .catch(next);
 };
 
 module.exports.getUserById = async (req, res, next) => {
   try {
     const user = await User.findById({ _id: req.params._id }).orFail(() => {
-      const error = new Error('No user/card found with that id');
-      error.statusCode = NotFoundError;
-      throw error;
+      throw new NotFoundError('No user/card found with that id');
     });
     res.send(user);
   } catch (err) {
@@ -63,7 +56,7 @@ module.exports.getUserById = async (req, res, next) => {
     } else if (err.name === 'CastError') {
       next(new ERROR_CODE('invalid user id '));
     } else {
-      next(new SERVER_ERROR('An error has occurred on the server.'));
+      next(err);
     }
   }
 };
@@ -109,9 +102,7 @@ module.exports.updateUser = async (req, res, next) => {
       { name, about },
       { new: true, runValidators: true },
     ).orFail(() => {
-      const error = new Error('No user/card found with that id');
-      error.statusCode = NotFoundError;
-      throw error;
+      throw new NotFoundError('No user/card found with that id');
     });
     return res.send(newUser);
   } catch (err) {
@@ -120,7 +111,7 @@ module.exports.updateUser = async (req, res, next) => {
     } else if (err.statusCode === NotFoundError) {
       next(new NotFoundError('there is no such user'));
     } else {
-      next(new SERVER_ERROR('An error has occurred on the server.'));
+      next(err);
     }
   }
 };
@@ -132,9 +123,7 @@ module.exports.updateAvatar = async (req, res, next) => {
       { avatar },
       { new: true, runValidators: true },
     ).orFail(() => {
-      const error = new Error('No user/card found with that id');
-      error.statusCode = NotFoundError;
-      throw error;
+      throw new NotFoundError('No user/card found with that id');
     });
     res.send(newUser);
   } catch (err) {
@@ -143,7 +132,7 @@ module.exports.updateAvatar = async (req, res, next) => {
     } else if (err.statusCode === NotFoundError) {
       next(new NotFoundError('there is no such user'));
     } else {
-      next(new SERVER_ERROR('An error has occurred on the server.'));
+      next(err);
     }
   }
 };
